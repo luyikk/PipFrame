@@ -82,8 +82,7 @@ namespace PipeFrame
             framesystem.AddFrame(frame);
             framesystem.AddFrame(new TestFrame2());
             framesystem.AddFrame(new TestFrame3());
-            framesystem.Start();
-
+            framesystem.Start();          
             Console.ReadLine();
 
             framesystem.RemoveFrame(frame);

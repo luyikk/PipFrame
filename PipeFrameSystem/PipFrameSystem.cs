@@ -12,15 +12,15 @@ namespace PipeFrame
         private readonly ILogger? logger;      
         public uint Rate { get; }
 
-        private readonly Lazy<ConcurrentDictionary<string, SyncFrameScheduler>> groupFrame;
+        private readonly Lazy<ConcurrentDictionary<string, SyncFrameScheduler>> groupFrames;
 
-        public ConcurrentDictionary<string, SyncFrameScheduler> GroupFrame => groupFrame.Value;
+        public ConcurrentDictionary<string, SyncFrameScheduler> GroupFrames => groupFrames.Value;
 
         public PipFrameSystem(ILogger? logger,uint rate)
         {            
             this.logger = logger;
             this.Rate = rate;
-            groupFrame = new Lazy<ConcurrentDictionary<string, SyncFrameScheduler>>(true);
+            groupFrames = new Lazy<ConcurrentDictionary<string, SyncFrameScheduler>>(true);
         }
 
         public PipFrameSystem(uint rate)
@@ -36,17 +36,17 @@ namespace PipeFrame
         /// <param name="frame"></param>
         public void AddFrame(BaseFrame frame)
         {
-            if (GroupFrame.ContainsKey(frame.GroupName))
+            if (GroupFrames.ContainsKey(frame.GroupName))
             {
-                GroupFrame[frame.GroupName].AddFrame(frame);
+                GroupFrames[frame.GroupName].AddFrame(frame);
             }
             else
             {
-                GroupFrame[frame.GroupName] = new SyncFrameScheduler(this.logger, this.Rate);
-                GroupFrame[frame.GroupName].AddFrame(frame);
+                GroupFrames[frame.GroupName] = new SyncFrameScheduler(this.logger, this.Rate);
+                GroupFrames[frame.GroupName].AddFrame(frame);
 
                 bool isStart = false;
-                foreach (var scheduler in GroupFrame.Values)
+                foreach (var scheduler in GroupFrames.Values)
                 {
                     if(scheduler.Status== SyncFrameScheduler.Runing)
                     {
@@ -56,7 +56,7 @@ namespace PipeFrame
 
                 if (isStart)
                 {
-                    GroupFrame[frame.GroupName].Start();
+                    GroupFrames[frame.GroupName].Start();
                 }
             }
         }
@@ -67,9 +67,9 @@ namespace PipeFrame
         /// <param name="frame"></param>
         public void RemoveFrame(BaseFrame frame)
         {
-            if (GroupFrame.ContainsKey(frame.GroupName))
+            if (GroupFrames.ContainsKey(frame.GroupName))
             {
-                GroupFrame[frame.GroupName].RemoveFrame(frame);
+                GroupFrames[frame.GroupName].RemoveFrame(frame);
             }           
         }
 
@@ -78,7 +78,7 @@ namespace PipeFrame
         /// </summary>
         public void Start()
         {
-            foreach (var scheduler in GroupFrame.Values)
+            foreach (var scheduler in GroupFrames.Values)
             {
                 scheduler.Start();
             }
@@ -89,7 +89,7 @@ namespace PipeFrame
         /// </summary>
         public void Stop()
         {
-            foreach (var scheduler in GroupFrame.Values)
+            foreach (var scheduler in GroupFrames.Values)
             {
                 scheduler.Stop();
             }
