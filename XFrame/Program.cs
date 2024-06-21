@@ -2,6 +2,9 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace PipeFrame
 {
@@ -70,12 +73,53 @@ namespace PipeFrame
         }
     }
 
+    //public class SingleThreadSynchronizationContext : SynchronizationContext
+    //{
+    //    private readonly BlockingCollection<KeyValuePair<SendOrPostCallback, object>> queue =
+    //        new BlockingCollection<KeyValuePair<SendOrPostCallback, object>>();
+
+    //    public override void Post(SendOrPostCallback d, object state)
+    //    {
+    //        queue.Add(new KeyValuePair<SendOrPostCallback, object>(d, state));
+    //    }
+
+    //    public void RunOnCurrentThread()
+    //    {
+    //        KeyValuePair<SendOrPostCallback, object> workItem;
+    //        while (queue.TryTake(out workItem, Timeout.Infinite))
+    //            workItem.Key(workItem.Value);
+    //    }
+
+    //    public void Complete() => queue.CompleteAdding();
+    //}
+
+    //class Program
+    //{
+    //    static void Main(string[] args)
+    //    {
+    //        var context = new SingleThreadSynchronizationContext();
+    //        SynchronizationContext.SetSynchronizationContext(context);
+
+    //        Task.Factory.StartNew(AsyncOperation);
+
+    //        context.RunOnCurrentThread();
+
+    //        context.Complete();
+    //    }
+
+    //    static async void AsyncOperation()
+    //    {
+    //        Console.WriteLine("Async operation started on thread id " + Thread.CurrentThread.ManagedThreadId);
+    //        await Task.Delay(1000);
+    //        Console.WriteLine("Async operation finished on thread id " + Thread.CurrentThread.ManagedThreadId);
+    //    }
+    //}
+
     class Program
     {
 
         static void Main(string[] args)
         {
-
             var framesystem = new PipFrameSystem(60);
 
             var frame = new TestFrame();
